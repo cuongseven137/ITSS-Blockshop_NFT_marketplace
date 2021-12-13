@@ -781,3 +781,76 @@ footer .foot-content .footer-grid {
             .home-nav-link h3 {
               font-family: "Eksell Display Large";
               margin-top: 18px; } }
+
+/* Support */
+.main-sp{
+  max-width: 750px;
+  margin: 100px auto;
+  padding-bottom: 50px;
+}
+.main-sp h1, h2, h3, h4{
+  color: rgb(55, 53, 47);
+}
+.main-sp h1{
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 30px 0;
+}
+.main-sp h2{
+  font-size: 1.875em;
+  line-height: 1.3;
+  font-weight: 600;
+  padding: 20px 0;
+}
+.main-sp h3{
+  font-size: 1.25em;
+  line-height: 1.3;
+  padding: 10px 0;
+}
+.main-sp h4{
+  font-size: 16px;
+  line-height: 1.5;
+  padding-bottom: 10px;
+  font-weight: 400;
+}
+.main-sp h5{
+  font-size: 16px;
+  color: rgba(68, 131, 97, 1);
+  fill: rgba(108, 155, 125, 1);
+  line-height: 1.5;
+  padding: 5px 0;
+}
+.community, .service, .privacy{
+  width: 100%;
+  display: block;
+  padding-right: 96px;
+}
+/* Support */
+
+/* Manual grid__item clearfix */
+.grid__item.clear {
+  clear: both; }
+
+.grid, .grid--rev, .grid--full,
+.grid-uniform {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-left: -30px; }
+
+.grid__item {
+  box-sizing: border-box;
+  float: left;
+  min-height: 1px;
+  padding-left: 30px;
+  vertical-align: top;
+  width: 100%; }
+
+.grid--rev {
+  direction: rtl;
+  text-align: left; }
+  .grid--rev > .grid__item {
+    direction: ltr;
+    text-align: left;
+    float: right; }

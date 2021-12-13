@@ -146,13 +146,13 @@ export default function HomePage() {
               <ul class="footer-contact no-bullets">
                 <h3>FOR ARTISTS</h3>
                 <li>
-                  <a href="">Submit artist profile</a>
-                </li>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSei3hnYAAab0JoqgHbHpClVh6eA3dwdeGKv0oIzc1U78-98Aw/viewform">Submit artist profile</a>
+                  </li>
               </ul>
             </div>
             <div class="footer-grid-item">
               <div class="footer-subscribe">
-                <h3>      Subscribe</h3>
+                <h3>Subscribe</h3>
           
                 <form
                   accept-charset="UTF-8"
@@ -181,18 +181,19 @@ export default function HomePage() {
                 </div>
               </ul>
             </div>
+            
             <div class="footer-grid-item">
               <ul class="footer-certification no-bullets">
                 <h3>LEGAL</h3>
 
                 <li>
-                  <a href="">Community Guidelines</a>
+                  <Link href="CommunityGuidelines">Community Guidelines</Link>
                 </li>
                 <li>
-                  <a href="">Terms of Service</a>
+                  <Link href="TermsofService">Terms of Service</Link>
                 </li>
                 <li>
-                  <a href="">Privacy Policy</a>
+                  <Link href="PrivacyPolicy">Privacy Policy</Link>
                 </li>
 
               </ul>
