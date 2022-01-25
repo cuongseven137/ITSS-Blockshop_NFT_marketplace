@@ -1,217 +1,94 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import  Link from 'next/link'
+import { ethers } from 'ethers'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import Web3Modal from "web3modal"
+import {
+    nftaddress, nftmarketaddress
+} from '../config'
 
+import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
+import Market from '../artifacts/contracts/NFTmarket.sol/NFTmarket.json'
 
-export default function HomePage() {
-  return (
-    <body>
-    <header>
-      <nav class="mobie-nav">
-        <div class="">
-          <button type="button" class="mobile-menu-btn">
-            <i class="fa fa-bars" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="mobile-logo">
-          <a href="/"
-            ><img src="image/logo.png"
-          /></a>
-        </div>
-        <div class="mobile-cart-btn">
-          <a href="#" class=""
-            ><i class="fa fa-shopping-cart" aria-hidden="true"></i
-          ></a>
-        </div>
-      </nav>
+export default function Home() {
+    const [nfts, setNfts] = useState([])
+    const [loadingState, setLoadingState] = useState('not-loaded')
+    useEffect(() => {
+        loadNFTs()
+    }, [])
+    async function loadNFTs() {
+        /* create a generic provider and query for unsold market items */
+        const provider = new ethers.providers.JsonRpcProvider()
+        const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
+        const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
+        const data = await marketContract.fetchMarketItems()
 
-  
-        <div class="header-logo">
-          <a href="/"
-            ><img src="image/logo.png"
-          /></a>
-           </div>
+        /*
+        *  map over items returned from smart contract and format 
+        *  them as well as fetch their token metadata
+        */
+        const items = await Promise.all(data.map(async i => {
+            const tokenUri = await tokenContract.tokenURI(i.tokenId)
+            const meta = await axios.get(tokenUri)
+            let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
+            let item = {
+                price,
+                tokenId: i.tokenId.toNumber(),
+                seller: i.seller,
+                owner: i.owner,
+                image: meta.data.image,
+                name: meta.data.name,
+                description: meta.data.description,
+            }
+            return item
+        }))
+        setNfts(items)
+        setLoadingState('loaded')
+    }
+    async function buyNft(nft) {
+        /* needs the user to sign the transaction, so will use Web3Provider and sign it */
+        const web3Modal = new Web3Modal()
+        const connection = await web3Modal.connect()
+        const provider = new ethers.providers.Web3Provider(connection)
+        const signer = provider.getSigner()
+        const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
 
-
-      <section class="navbar">
-        <ul class="site-nav">
-          <li class="active dropdown-menu">
-            < Link href='Market'>Market</Link>  </li>
-          
-          <li class="dropdown-menu">
-            < Link href="Features">Features</Link> </li>
-          
-          <li class="dropdown-menu">
-            <a href="#"
-              >Community <i class="fa fa-caret-down" aria-hidden="true"></i
-            ></a> </li>
-        
-         
-          <li class="menu-btn main-nav"><a href="#">Search</a></li>
-          <li class="menu-btn main-nav"><Link href="RegisterPage">Sign In</Link></li>
-        </ul>
-      </section>
-
-      <section class="thumbnail">
-        <img
-          src="image/logo1.png"
-        />
-      </section>
-    </header>
-
-    <main class="main-content">
-
-      <section class="home-policy">
-        <div class="wrapper">
-          <div class="policy-grid">
-            <div class="policy-item">
-              <div class="policy-icon">
-                <img
-                  src="//theme.hstatic.net/1000281383/1000535724/14/policy_icon_1.png?v=242"
-                  alt="GIAO HÀNG TOÀN QUỐC"
-                />
-              </div>
-              <div class="policy-title">Nationwide Delivery</div>
-            </div>
-
-            <div class="policy-item">
-              <div class="policy-icon">
-                <img
-                  src="//theme.hstatic.net/1000281383/1000535724/14/policy_icon_2.png?v=242"
-                  alt="CHẤT LƯỢNG ĐẢM BẢO"
-                />
-              </div>
-              <div class="policy-title">Prestigious quality</div>
-            </div>
-
-            <div class="policy-item">
-              <div class="policy-icon">
-                <img
-                  src="//theme.hstatic.net/1000281383/1000535724/14/policy_icon_3.png?v=242"
-                  alt="THANH TOÁN LINH HOẠT"
-                />
-              </div>
-              <div class="policy-title">Flexible payment</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="home-banner">
-        <div class="wrapper">
-          <div class="banner-grid">
-            <div class="banner-item">
-              <a target="_blank" href="/collections/all">
-                <img
-                  src="image/logo3.png"
-                />
-              </a>
-            </div>
-            <div class="banner-item">
-              <a target="_blank" href="/collections/all">
-                <img
-                  src="image/logo2.png"
-                />
-              </a>
-            </div>
-            <div class="banner-item">
-              <a target="_blank" href="/collections/all">
-                <img
-                  src="image/logo4.png"
-                />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="foot-content">
-        <div class="ft-bg-overlay"></div>
-        <div class="wrapper">
-          <div class="footer-grid">
-            <div class="footer-grid-item">
-              <ul>
-                <h3>SuperRare</h3>
-
-                <li>
-                  <a href="">© 2021 SuperRare</a>
-                </li>
-
-              </ul>
-            </div>
-            <div class="footer-grid-item">
-              <ul class="footer-contact no-bullets">
-                <h3>FOR ARTISTS</h3>
-                <li>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSei3hnYAAab0JoqgHbHpClVh6eA3dwdeGKv0oIzc1U78-98Aw/viewform">Submit artist profile</a>
-                  </li>
-              </ul>
-            </div>
-            <div class="footer-grid-item">
-              <div class="footer-subscribe">
-                <h3>Subscribe</h3>
-          
-                <form
-                  accept-charset="UTF-8"
-                  action=""
-                  class="contact-form"
-                  method="post"
-                >
-                  <div class="input-group subscribe-form">
-                    <input type="email" placeholder="Email address" />
-                    <button type="submit">
-                      <i class="fa fa-paper-plane"></i>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div class="footer-grid-item">
-              <ul class="footer-social">
-                <h3>COMMUNITY</h3>
-                <div class="ft-social-network">
-                  <a href="https://www.facebook.com/superrare.co"><i class="fab fa-facebook-f"></i></a>
-
-                  <a href="https://www.instagram.com/superrare.co/"><i class="fab fa-instagram"></i></a>
-
-                  <a href="https://www.youtube.com/channel/UCp9loE7UzFpFxtQHNK8TbKg" ><i class="fab fa-youtube"></i></a>
+        /* user will be prompted to pay the asking proces to complete the transaction */
+        const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
+        const transaction = await contract.createMarketSale(nftaddress, nft.tokenId, {
+            value: price
+        })
+        await transaction.wait()
+        loadNFTs()
+    }
+    if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>)
+    return (
+        <div className="home">
+            <div className="products">
+                <div className="products-title">
+                    <p>SALE LIST</p>
                 </div>
-              </ul>
+                <div className="item-new">
+                    {
+                        nfts.map((nft, i) => (
+                            <div key={i} className="product">
+                                <div className="image-product">
+                                    <img src={nft.image} />
+                                </div>
+                                <div className="p-4">
+                                    <p style={{ height: '50px' }} className="text-2xl font-semibold">{nft.name}</p>
+                                    <div style={{ height: '40px', overflow: 'hidden' }}>
+                                        <p className="text-gray-400">{nft.description}</p>
+                                    </div>
+                                </div>
+                                <div id='black-p' className="p-4 bg-black">
+                                    <p className="text-2xl mb-4 font-bold text-white">{nft.price} ETH</p>
+                                    <button className="w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNft(nft)}>Buy</button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
             </div>
-            
-            <div class="footer-grid-item">
-              <ul class="footer-certification no-bullets">
-                <h3>LEGAL</h3>
-
-                <li>
-                  <Link href="CommunityGuidelines">Community Guidelines</Link>
-                </li>
-                <li>
-                  <Link href="TermsofService">Terms of Service</Link>
-                </li>
-                <li>
-                  <Link href="PrivacyPolicy">Privacy Policy</Link>
-                </li>
-
-              </ul>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="copyright">
-        <div class="wrapper">
-          <p>
-            Copyrights © by
-            <a target="_blank" href="https://superrare.com/">SuperRare
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
-  </body>
-)
+    )
 }
-

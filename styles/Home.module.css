@@ -112,26 +112,5 @@
   .grid {
     width: 100%;
     flex-direction: column;
-
-  box-sizing: border-box;
-  font-size: 14px;
-  font-family: "Roboto", sans-serif;
+  }
 }
-}
-
-.html {
-  height: 100vh;
-  overflow-x: hidden;
-}
-
-.body {
-  margin: 0;
-}
-
-.header-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 30px;
-}
-
